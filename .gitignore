@@ -1,9 +1,9 @@
 official_data
 tmp_data
-recognizer/colab_code
-recognizer/tools/own_code
+**recognizer/colab_code/
+**recognizer/tools/own_code/
 .ipynb_checkpoints
-recognizer/.ipynb_checkpoints/*
-recognizer/__pychache__/*
-recognizer/models/__pychache__/*
-recognizer/tools/__pychache__/*
+**recognizer/.ipynb_checkpoints/
+**recognizer/__pychache__/
+**recognizer/models/__pychache__/
+**recognizer/tools/__pychache__/
