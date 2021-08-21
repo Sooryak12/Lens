@@ -7,21 +7,21 @@ from skimage import io
 global_image_num = 0
 char_set = set()
 
-not_include=['%', '·', '₹', 'é', '@', '★', '，', '?', 'í', '~', ';', '—', '€', '®', 'ñ', ']', '[', '½', '￡', 'ó', '）', '¢', '□', '￥', '■', '©', '、', '>', '_', '™', '=', '（', '▪', '✱', '¼', '▶', 'Ⅰ', 'á', '√', '°', '”', '{', '»', '：', '○', '}', '．', '～', '<', '…', '“', '◎', '▲', '†', '一', '∨', '×', '¾', '℃', '–', '\\', '＄', '／', '⠁', '》', 'ɪ', '¤', '☺', 'μ', '〕', '〔', '◆', '▼', '„', '˚', 'Í', '｜', '丨', '◇', '℉', '₂', '⁺', '；', '！', '☑', '①', '※', '️', 'Ⅱ', '⅓', 'ı', '③', '②', '→', '\xad', '？', '＆', '。', '✕', '④', '⅔', '฿', 'ʊ', '＝', '％', '✳', '✓', '☆', '‘', 'ə', 'ń', 'Ü', '§', '¥', '`', '《', '✶', '►', '∧', '↓', 'Ⅳ', 'Ⅲ', '⅛', '’', 'ł', 'İ', 'ę', 'ç', 'È', 'Å', 'À', '］', '－', '＇', '口', '」', '「', '♡', '◀', '┃', 'ⓥ', '⑮', '⑭', '⑬', '⑫', '⑪', '⑩', '⑨', '⑧', '⑦', '⑥', '⑤', '↑', '←', 'Ⅹ', 'Ⅷ', 'Ⅶ', 'Ⅵ', 'Ⅴ', '₁', '⁻', '⁶', 'й', 'β', 'Λ', 'ʃ', 'ǵ', 'ş', 'Ş', 'Ą', 'ø', 'ï', 'Ç', '´', '³', '«']
+
+not_include=['%', '·', '₹', 'é', '@', '★', '，', '?', 'í', '~', ';', '—', '€', '®', 'ñ', ']', '[', '½', '￡', 'ó', '）', '¢', '□', '￥', '■', '©', '、', '>', '_', '™', '=', '（', '▪', '✱', '¼', '▶', 'Ⅰ', 'á', '√', '°', '”', '{', '»', '：', '○', '}', '．', '～', '<', '…', '“', '◎', '▲', '†', '一', '∨', '×', '¾', '℃', '–', '\\', '＄', '／', '⠁', '》', 'ɪ', '¤', '☺', 'μ', '〕', '〔', '◆', '▼', '„', '˚', 'Í', '｜', '丨', '◇', '℉', '₂', '⁺', '；', '！', '☑', '①', '※', '️', 'Ⅱ', '⅓', 'ı', '③', '②', '→', '\xad', '？', '＆', '。', '✕', '④', '⅔', '฿', 'ʊ', '＝', '％', '✳', '✓', '☆', '‘', 'ə', 'ń', 'Ü', '§', '¥', '`', '《', '✶', '►', '∧', '↓', 'Ⅳ', 'Ⅲ', '⅛', '’', 'ł', 'İ', 'ę', 'ç', 'È', 'Å', 'À', '］', '－', '＇', '口', '」', '「', '♡', '◀', '┃', 'ⓥ', '⑮', '⑭', '⑬', '⑫', '⑪', '⑩', '⑨', '⑧', '⑦', '⑥', '⑤', '↑', '←', 'Ⅹ', 'Ⅷ', 'Ⅶ', 'Ⅵ', 'Ⅴ', '₁', '⁻', '⁶', 'й', 'β', 'Λ', 'ʃ', 'ǵ', 'ş', 'Ş', 'Ą', 'ø', 'ï', 'Ç', '´', '³', '«'
+,'Á','É','Ñ','Ó','Ú','à','â','ã','ä','è','ê','ì','î','ò','ô','ö','ú','ü','ā','œ','Й','•','≥','●',"#"]  # --> add it all time
 invalid_boxes=0
 
 def extract_train_data(src_image_root_path, src_label_json_file, save_image_path, save_txt_path):
-    global global_image_num, char_set,i
-    i=0
+    global global_image_num, char_set,invalid_boxes
+
     with open(src_label_json_file, 'r', encoding='utf-8') as in_file:
         print("Label json file read \n")
         label_info_dict = json.load(in_file)
         with open(os.path.join(save_txt_path, 'train.txt'), 'a', encoding='utf-8') as out_file:
             print("Output train file Generated \n")
             for image_name, text_info_list in label_info_dict.items():
-                i=i+1
-                if i%1000 ==0 :
-                    print(i,end=" ")
+
                 src_image = io.imread(os.path.join(src_image_root_path, image_name))
                 for text_info in text_info_list:
                     try:
@@ -39,11 +39,11 @@ def extract_train_data(src_image_root_path, src_label_json_file, save_image_path
                         
                         crop_image=src_image[round(src_point_list[0][1]):round(src_point_list[2][1]),round(src_point_list[0][0]):round(src_point_list[2][0]),:3]
 
-                        if crop_image.size == 0:
+                        if crop_image.size < 1:
                             continue
                         crop_image_name = '{}.jpg'.format(global_image_num)
                         global_image_num += 1
-                        cv2.imwrite(os.path.join(save_image_path, crop_image_name), crop_image)
+                        io.imsave(os.path.join(save_image_path, crop_image_name), crop_image,check_contrast=False)
                         out_file.write('{}\t{}\n'.format(crop_image_name, text))
                         
                         
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     char_list = list(char_set)
     char_list.sort()
 
-    with open('dictionary/chars.txt', 'a', encoding='utf-8') as out_file:
+    with open('recognizer/tools/dictionary/chars.txt', 'a', encoding='utf-8') as out_file:
         for char in char_list:
             out_file.write('{}\n'.format(char))
 

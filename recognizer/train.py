@@ -10,6 +10,7 @@ import tensorflow as tf
 
 from recognizer.models.crnn_model import crnn_model_based_on_densenet_crnn_time_softmax_activate
 from recognizer.tools.generator import Generator
+from recognizer.tools.config import config
 
 K = tf.compat.v1.keras.backend
 
