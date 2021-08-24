@@ -103,13 +103,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--char_path', type=str, default='recognizer/tools/dictionary/chars.txt')
     parser.add_argument('--model_path', type=str,
-                        default='/path/to/checkpoints/recognizer/weights_crnn-010-28.863.h5')
+                        default='checkpoints/recognizer/weights_crnn-010-28.863.h5')
     parser.add_argument('--null_json_path', type=str,
-                        default='/path/to/output/test_null.json')
+                        default='output/test_null.json')
     parser.add_argument('--test_image_path', type=str,
-                        default='/path/to/output/detector_test_output/menu')
+                        default='output/detector_test_output/menu')
     parser.add_argument('--submission_path', type=str,
-                        default='/path/to/output/test_submission.json')
+                        default='output/test_submission.json')
     opt = parser.parse_args()
 
     character_map_table = get_chinese_dict(opt.char_path)
@@ -128,13 +128,8 @@ if __name__ == '__main__':
             print('process: {:3d}/{:3d}. image: {}'.format(idx + 1, len(label_info_dict.items()), image_name))
             for index, text_info in enumerate(text_info_list):
                 src_point_list = text_info['points']
-                sorted_point_list_by_x = sorted(src_point_list, key=lambda x: x[0])
-                sorted_point_list_by_y = sorted(src_point_list, key=lambda x: x[1])
-                # print(src_point_list)
-                # print(sorted_point_list_by_x, sorted_point_list_by_y)
-                # print(src_image)
-                crop_image = src_image[sorted_point_list_by_y[0][1]:sorted_point_list_by_y[-1][1],
-                             sorted_point_list_by_x[0][0]:sorted_point_list_by_x[-1][0], :]
+
+                crop_image=src_image[round(src_point_list[0][1]):round(src_point_list[2][1]),round(src_point_list[0][0]):round(src_point_list[2][0]),:3]
                 rec_result = predict(crop_image, input_shape, model)
                 text_info['label'] = rec_result
 
