@@ -103,11 +103,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--char_path', type=str, default='recognizer/tools/dictionary/chars.txt')
     parser.add_argument('--model_path', type=str,
-                        default='checkpoints/recognizer/weights_crnn-010-28.863.h5')
+                        default='checkpoint/recognizer/weights_crnn-010-28.863.h5')
     parser.add_argument('--null_json_path', type=str,
                         default='output/test_null.json')
     parser.add_argument('--test_image_path', type=str,
-                        default='output/detector_test_output/menu')
+                        default='offical_data/test_images')
     parser.add_argument('--submission_path', type=str,
                         default='output/test_submission.json')
     opt = parser.parse_args()
@@ -123,15 +123,18 @@ if __name__ == '__main__':
         label_info_dict = json.load(in_file)
         for idx, info in enumerate(label_info_dict.items()):
             image_name, text_info_list = info
-            src_image = cv2.imread(os.path.join(test_image_root_path, image_name.split('.')[0] + '.JPEG'))
+            src_image = cv2.imread(os.path.join(test_image_root_path, image_name)
             # print(os.path.join(test_image_root_path, image_name))
             print('process: {:3d}/{:3d}. image: {}'.format(idx + 1, len(label_info_dict.items()), image_name))
             for index, text_info in enumerate(text_info_list):
-                src_point_list = text_info['points']
+                try:
+                    src_point_list = text_info['points']
 
-                crop_image=src_image[round(src_point_list[0][1]):round(src_point_list[2][1]),round(src_point_list[0][0]):round(src_point_list[2][0]),:3]
-                rec_result = predict(crop_image, input_shape, model)
-                text_info['label'] = rec_result
+                    crop_image=src_image[round(src_point_list[0][1]):round(src_point_list[2][1]),round(src_point_list[0][0]):round(src_point_list[2][0]),:3]
+                    rec_result = predict(crop_image, input_shape, model)
+                    text_info['label'] = rec_result
+                except:                   
+                    print(f"Image Name :{image_name},Index {index} , Points :{text_info['points']}")
 
     save_label_json_file = opt.submission_path
     with open(save_label_json_file, 'w') as out_file:
