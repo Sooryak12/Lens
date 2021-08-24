@@ -16,17 +16,17 @@ def ctc_lambda_func(args):
     return K.ctc_batch_cost(label, prediction, input_length, label_length)
 
 
-def ctc_lambda_func_with_tf_to_numpy_wc_char(args):
-    prediction, label, input_length, label_length = args
-    y_pred = prediction[:, :, :].numpy()
-    accs=0
-    for i,word in zip(list(y_pred.argmax(axis=2)),label):
-        pred_text = list(i)
-        acc=0
-        for index,truth in zip(groupby(pred_text),word):
-            if index==truth:
-                acc+=1
-    return K.ctc_batch_cost(label, prediction, input_length, label_length),accs+=acc/len(word)
+# def ctc_lambda_func_with_tf_to_numpy_wc_char(args):
+#     prediction, label, input_length, label_length = args
+#     y_pred = prediction[:, :, :].numpy()
+#     accs=0
+#     for i,word in zip(list(y_pred.argmax(axis=2)),label):
+#         pred_text = list(i)
+#         acc=0
+#         for index,truth in zip(groupby(pred_text),word):
+#             if index==truth:
+#                 acc+=1
+#     return K.ctc_batch_cost(label, prediction, input_length, label_length),accs+=acc/len(word)
 
 
 
@@ -56,8 +56,8 @@ def crnn_model_based_on_densenet_crnn_time_softmax_activate(initial_learning_rat
     input_length = Input(name='input_length', shape=[1], dtype='int64')
     label_length = Input(name='label_length', shape=[1], dtype='int64')
 
-    #loss_out = Lambda(ctc_lambda_func, output_shape=(1,), name='ctc')([output, label, input_length, label_length])
-    loss_out =  Lambda(ctc_lambda_func_with_tf_to_numpy_wc_char, output_shape=(2,), name='ctc')([output, label, input_length, label_length])
+    loss_out = Lambda(ctc_lambda_func, output_shape=(1,), name='ctc')([output, label, input_length, label_length])
+    #loss_out =  Lambda(ctc_lambda_func_with_tf_to_numpy_wc_char, output_shape=(2,), name='ctc')([output, label, input_length, label_length])
 
     model = tf.keras.models.Model(inputs=[inputs, label, input_length, label_length], outputs=loss_out)
 
@@ -103,7 +103,7 @@ def crnn_model_based_on_densenet_crnn_time_softmax_activate(initial_learning_rat
     #         predicton.append(u''.join(char_list))
     
     model.compile(loss={'ctc': lambda y_true, prediction: prediction},
-                    metrics={'tf_to_numpy_wc_char':lambda output,label :}
+                   # metrics={'tf_to_numpy_wc_char':lambda output,label :}
                   optimizer=tf.keras.optimizers.Adam(initial_learning_rate), metrics=['accuracy'])
 
 #    model.compile(loss={'ctc': lambda y_true, prediction: prediction},
