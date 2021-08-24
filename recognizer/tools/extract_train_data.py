@@ -65,14 +65,14 @@ if __name__ == '__main__':
     parser.add_argument('--save_train_txt_path', type=str,
                         default='tmp_data/recognizer_txts')
     parser.add_argument('--train_image_common_root_path', type=str,
-                        default='/path/to/official_data/train_image_common')
+                        default='official_data/train_image_common')
     parser.add_argument('--common_label_json_file', type=str,
                         default='official_data/train_label_common.json')
 
     parser.add_argument('--train_image_special_root_path', type=str,
-                       default='/path/to/official_data/train_image_special')
+                       default='official_data/train_image_special')
     parser.add_argument('--special_label_json_file', type=str,
-                       default='/path/to/official_data/train_label_special.json')
+                       default='official_data/train_label_special.json')
 
     opt = parser.parse_args()
 
@@ -98,11 +98,11 @@ if __name__ == '__main__':
                       save_train_image_path,
                       save_train_txt_path)
     
-     print("---****----")
-     print("Special count : {}".format(global_image_num-common))
-     print('Total Image num is {}.'.format(global_image_num))
+    print("---****----")
+    print("Special count : {}".format(global_image_num-common))
+    print('Total Image num is {}.'.format(global_image_num))
         
-     print("Invalid Boxes : ",invalid_boxes)
+    print("Invalid Boxes : ",invalid_boxes)
 
     char_list = list(char_set)
     char_list.sort()
