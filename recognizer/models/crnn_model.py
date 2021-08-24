@@ -2,6 +2,8 @@
 
 import tensorflow as tf
 
+from itertools import groupby
+
 from recognizer.models.crnn import densenet_crnn_time
 
 K = tf.compat.v1.keras.backend
@@ -30,6 +32,43 @@ def crnn_model_based_on_densenet_crnn_time_softmax_activate(initial_learning_rat
     loss_out = Lambda(ctc_lambda_func, output_shape=(1,), name='ctc')([output, label, input_length, label_length])
 
     model = tf.keras.models.Model(inputs=[inputs, label, input_length, label_length], outputs=loss_out)
+    #numpy version
+    def numpyv(output,label):
+        y_pred = output[:, :, :]
+        char_list = list()
+        prediction=[]
+        for i in list(y_pred.argmax(axis=2)):
+            pred_text = list(i)
+            for index in groupby(pred_text):
+                if index[0] != config.num_class - 1:
+                    char_list.append(character_map_table[str(index[0])])
+            predicton.append(u''.join(char_list))
+        
+
+    #tensorflow to numpy version
+    def tf_to_numpy(output,label):
+        output=output.numpy()
+        y_pred = output[:, :, :]
+        char_list = list()
+        prediction=[]
+        for i in list(y_pred.argmax(axis=2)):
+            pred_text = list(i)
+            for index in groupby(pred_text):
+                if index[0] != config.num_class - 1:
+                    char_list.append(character_map_table[str(index[0])])
+            predicton.append(u''.join(char_list))
+
+
+    def tf_v(output,label):
+        y_pred = output[:, :, :]
+        char_list = list()
+        prediction=[]
+        for i in list(tf.math.argmax(y_pred,axis=2)):
+            pred_text = list(i)
+            for index in groupby(pred_text):
+                if index[0] != config.num_class - 1:
+                    char_list.append(character_map_table[str(index[0])])
+            predicton.append(u''.join(char_list))
     
     model.compile(loss={'ctc': lambda y_true, prediction: prediction},
                   optimizer=tf.keras.optimizers.Adam(initial_learning_rate), metrics=['accuracy'])
