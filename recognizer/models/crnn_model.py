@@ -16,17 +16,18 @@ def ctc_lambda_func(args):
     return K.ctc_batch_cost(label, prediction, input_length, label_length)
 
 
-# def ctc_lambda_func_with_tf_to_numpy_wc_char(args):
-#     prediction, label, input_length, label_length = args
-#     y_pred = prediction[:, :, :].numpy()
-#     accs=0
-#     for i,word in zip(list(y_pred.argmax(axis=2)),label):
-#         pred_text = list(i)
-#         acc=0
-#         for index,truth in zip(groupby(pred_text),word):
-#             if index==truth:
-#                 acc+=1
-#     return K.ctc_batch_cost(label, prediction, input_length, label_length),accs+=acc/len(word)
+def ctc_lambda_func_with_tf_to_numpy_wc_char(args):
+    prediction, label, input_length, label_length = args
+    y_pred = prediction[:, :, :].numpy()
+    accs=0
+    for i,word in zip(list(y_pred.argmax(axis=2)),label):
+        pred_text = list(i)
+        acc=0
+        for index,truth in zip(groupby(pred_text),word):
+            if index==truth:
+                acc+=1
+        accs+=acc/len(word)
+    return K.ctc_batch_cost(label, prediction, input_length, label_length),accs
 
 
 
@@ -60,6 +61,19 @@ def crnn_model_based_on_densenet_crnn_time_softmax_activate(initial_learning_rat
     #loss_out =  Lambda(ctc_lambda_func_with_tf_to_numpy_wc_char, output_shape=(2,), name='ctc')([output, label, input_length, label_length])
 
     model = tf.keras.models.Model(inputs=[inputs, label, input_length, label_length], outputs=loss_out)
+
+
+    
+    # model.compile(loss={'ctc': lambda y_true, prediction: prediction},
+    #               optimizer=tf.keras.optimizers.Adam(initial_learning_rate), metrics=['accuracy'])
+
+    model.compile(loss={'ctc': lambda y_true, prediction: prediction},
+                   metrics={'ctc':lambda output,label :output}
+                 optimizer=tf.keras.optimizers.Adam(initial_learning_rate))
+    #sgd = SGD(lr=0.02, decay=1e-6, momentum=0.9, nesterov=True, clipnorm=5)  -> other optimizer
+    return model_body, model
+
+
 
 
     #numpy version
@@ -101,15 +115,3 @@ def crnn_model_based_on_densenet_crnn_time_softmax_activate(initial_learning_rat
     #             if index[0] != config.num_class - 1:
     #                 char_list.append(character_map_table[str(index[0])])
     #         predicton.append(u''.join(char_list))
-    
-    model.compile(loss={'ctc': lambda y_true, prediction: prediction},
-                   # metrics={'tf_to_numpy_wc_char':lambda output,label :}
-                  optimizer=tf.keras.optimizers.Adam(initial_learning_rate), metrics=['accuracy'])
-
-#    model.compile(loss={'ctc': lambda y_true, prediction: prediction},
-#                    metrics={'tf_to_numpy_wc_char':lambda output,label :}
-#                  optimizer=tf.keras.optimizers.Adam(initial_learning_rate), metrics=['accuracy'])
-    #sgd = SGD(lr=0.02, decay=1e-6, momentum=0.9, nesterov=True, clipnorm=5)  -> other optimizer
-    return model_body, model
-
-

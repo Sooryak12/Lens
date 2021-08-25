@@ -4,7 +4,7 @@ import os
 import json
 import cv2
 import sys
-
+from skimage import io
 import numpy as np
 
 from itertools import groupby
@@ -123,9 +123,11 @@ if __name__ == '__main__':
         label_info_dict = json.load(in_file)
         for idx, info in enumerate(label_info_dict.items()):
             image_name, text_info_list = info
-            src_image = cv2.imread(os.path.join(test_image_root_path, image_name)
+            src_image = io.imread(f"official_data/test_image/{image_name}")
             # print(os.path.join(test_image_root_path, image_name))
-            print('process: {:3d}/{:3d}. image: {}'.format(idx + 1, len(label_info_dict.items()), image_name))
+            #print('process: {:3d}/{:3d}. image: {}'.format(idx + 1, len(label_info_dict.items()), image_name))
+            if idx %50==0:
+                print(idx)
             for index, text_info in enumerate(text_info_list):
                 try:
                     src_point_list = text_info['points']
@@ -134,7 +136,7 @@ if __name__ == '__main__':
                     rec_result = predict(crop_image, input_shape, model)
                     text_info['label'] = rec_result
                 except:                   
-                    print(f"Image Name :{image_name},Index {index} , Points :{text_info['points']}")
+                    print(f"Image Name :{image_name},Index {index}")
 
     save_label_json_file = opt.submission_path
     with open(save_label_json_file, 'w') as out_file:
