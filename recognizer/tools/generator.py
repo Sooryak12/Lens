@@ -84,6 +84,34 @@ class Generator:
                 index = 0
                 
                 for image_name in batch_image_name_array:
+                    try:
+                        if input_channel == 1:
+                            image = cv2.imread(os.path.join(self.root_path, image_name), cv2.IMREAD_GRAYSCALE)
+                        else:
+                            image = cv2.imread(os.path.join(self.root_path, image_name), cv2.IMREAD_COLOR)
+
+                        scale = image.shape[0] * 1.0 / input_height
+                        image_width = int(image.shape[1] // scale)
+                        image = cv2.resize(image, (image_width, input_height))
+                        image_height, image_width = image.shape[0:2]
+                        if image_width <= input_width:
+                            new_image = np.ones((input_height, input_width, input_channel), dtype='uint8')
+                            new_image[:] = 255
+                            if input_channel == 1:
+                                image = np.expand_dims(image, axis=2)
+                            new_image[:, :image_width, :] = image
+                            image = new_image
+                        else:
+                            image = cv2.resize(image, (input_width, input_height))
+                            if input_channel == 1:
+                                image = np.expand_dims(image, axis=2)
+                        image = np.array(image, 'f') / 127.5 - 1.0
+                    except Exception as e:
+                        print('skipped image {}. exception: {}'.format(image_name, e))
+                        continue
+
+
+
                     input_images[index] = image
                     label_length[index] = len(self.image_to_label[image_name])
                     input_length[index] = sequence_length

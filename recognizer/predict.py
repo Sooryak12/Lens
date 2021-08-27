@@ -103,11 +103,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--char_path', type=str, default='recognizer/tools/dictionary/chars.txt')
     parser.add_argument('--model_path', type=str,
-                        default='checkpoint/recognizer/weights_crnn-010-28.863.h5')
+                        default='/content/checkpoint/recognizer/weights_crnn-012-12.042.h5')
     parser.add_argument('--null_json_path', type=str,
-                        default='output/test_null.json')
+                        default='null_submission_25000.json')
     parser.add_argument('--test_image_path', type=str,
-                        default='offical_data/test_images')
+                        default='offical_data/test_image')
     parser.add_argument('--submission_path', type=str,
                         default='output/test_submission.json')
     opt = parser.parse_args()
@@ -126,7 +126,7 @@ if __name__ == '__main__':
             src_image = io.imread(f"official_data/test_image/{image_name}")
             # print(os.path.join(test_image_root_path, image_name))
             #print('process: {:3d}/{:3d}. image: {}'.format(idx + 1, len(label_info_dict.items()), image_name))
-            if idx %50==0:
+            if idx %25==0:
                 print(idx)
             for index, text_info in enumerate(text_info_list):
                 try:
