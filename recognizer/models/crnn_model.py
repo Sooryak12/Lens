@@ -64,12 +64,12 @@ def crnn_model_based_on_densenet_crnn_time_softmax_activate(initial_learning_rat
 
 
     
-    # model.compile(loss={'ctc': lambda y_true, prediction: prediction},
-    #               optimizer=tf.keras.optimizers.Adam(initial_learning_rate), metrics=['accuracy'])
+     model.compile(loss={'ctc': lambda y_true, prediction: prediction},
+                   optimizer=tf.keras.optimizers.Adam(initial_learning_rate), metrics=['accuracy','LogCoshError'])
 
-    model.compile(loss={'ctc': lambda y_true, prediction: prediction},
-                   metrics={'ctc':lambda output,label :output}
-                 optimizer=tf.keras.optimizers.Adam(initial_learning_rate))
+    # model.compile(loss={'ctc': lambda y_true, prediction: prediction},
+    #                metrics={'ctc':lambda output,label :output}
+    #              optimizer=tf.keras.optimizers.Adam(initial_learning_rate))
     #sgd = SGD(lr=0.02, decay=1e-6, momentum=0.9, nesterov=True, clipnorm=5)  -> other optimizer
     return model_body, model
 
