@@ -17,7 +17,7 @@ from recognizer.models.crnn_model import crnn_model_based_on_densenet_crnn_time_
 from recognizer.tools.config import config
 from recognizer.tools.utils import get_chinese_dict
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
 class ModelType(Enum):
@@ -83,12 +83,22 @@ def predict(image, input_shape, base_model):
         new_image[:] = 255
         if input_channel == 1:
             image = np.expand_dims(image, axis=2)
-        new_image[:, :image_width, :] = image
+        try:
+          new_image[:, :image_width, :] = image
+        except:
+          image =np.expand_dims(image,axis=2)
+          image= np.repeat(image, 3, axis=2)
+          new_image[:, :image_width, :] = image    
         image = new_image
     else:
         image = cv2.resize(image, (input_width, input_height))
     text_image = np.array(image, 'f') / 127.5 - 1.0
-    text_image = np.reshape(text_image, [1, input_height, input_width, input_channel])
+    try:
+      text_image = np.reshape(text_image, [1, input_height, input_width, input_channel])
+    except:   
+        text_image=np.expand_dims(text_image,axis=2)   
+        text_image= np.repeat(text_image, 3, axis=2)
+        text_image = np.reshape(text_image, [1, input_height, input_width, input_channel])
     y_pred = base_model.predict(text_image)
     y_pred = y_pred[:, :, :]
     char_list = list()
@@ -103,9 +113,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--char_path', type=str, default='recognizer/tools/dictionary/chars.txt')
     parser.add_argument('--model_path', type=str,
-                        default='/content/checkpoint/recognizer/weights_crnn-012-12.042.h5')
+                        default='/content/weights_crnn-005-14.220.h5')
     parser.add_argument('--null_json_path', type=str,
-                        default='null_submission_25000.json')
+                        default='null_submission_30000.json')
     parser.add_argument('--test_image_path', type=str,
                         default='offical_data/test_image')
     parser.add_argument('--submission_path', type=str,
@@ -131,15 +141,17 @@ if __name__ == '__main__':
             for index, text_info in enumerate(text_info_list):
                 try:
                     src_point_list = text_info['points']
-
-                    crop_image=src_image[round(src_point_list[0][1]):round(src_point_list[2][1]),round(src_point_list[0][0]):round(src_point_list[2][0]),:3]
+                    try:
+                      crop_image=src_image[round(src_point_list[0][1]):round(src_point_list[2][1]),round(src_point_list[0][0]):round(src_point_list[2][0]),:3]
+                    except:
+                      crop_image=src_image[round(src_point_list[0][1]):round(src_point_list[2][1]),round(src_point_list[0][0]):round(src_point_list[2][0])]
                     rec_result = predict(crop_image, input_shape, model)
                     text_info['label'] = rec_result
-                except:                   
-                    print(f"Image Name :{image_name},Index {index}")
+                except:
+                    print(image_name,index)
 
     save_label_json_file = opt.submission_path
-    with open(save_label_json_file, 'w') as out_file:
+    with open(save_label_json_file, 'w',encoding="utf-8") as out_file:
         out_file.write(json.dumps(label_info_dict))
 
 
