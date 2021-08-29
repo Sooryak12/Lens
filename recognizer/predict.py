@@ -99,6 +99,8 @@ def predict(image, input_shape, base_model):
         text_image=np.expand_dims(text_image,axis=2)   
         text_image= np.repeat(text_image, 3, axis=2)
         text_image = np.reshape(text_image, [1, input_height, input_width, input_channel])
+    # y_pred=0
+    # return y_pred
     y_pred = base_model.predict(text_image)
     y_pred = y_pred[:, :, :]
     char_list = list()
@@ -113,9 +115,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--char_path', type=str, default='recognizer/tools/dictionary/chars.txt')
     parser.add_argument('--model_path', type=str,
-                        default='/content/weights_crnn-005-14.220.h5')
+                        default='/content/weights_crnn-010-12.184.h5')
     parser.add_argument('--null_json_path', type=str,
-                        default='null_submission_30000.json')
+                        default='null_submission_non_max.json')
     parser.add_argument('--test_image_path', type=str,
                         default='offical_data/test_image')
     parser.add_argument('--submission_path', type=str,
@@ -147,8 +149,8 @@ if __name__ == '__main__':
                       crop_image=src_image[round(src_point_list[0][1]):round(src_point_list[2][1]),round(src_point_list[0][0]):round(src_point_list[2][0])]
                     rec_result = predict(crop_image, input_shape, model)
                     text_info['label'] = rec_result
-                except:
-                    print(image_name,index)
+                except Exception as e:
+                    print(f"{image_name} : {index} -> {e}")
 
     save_label_json_file = opt.submission_path
     with open(save_label_json_file, 'w',encoding="utf-8") as out_file:
