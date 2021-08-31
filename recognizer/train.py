@@ -37,7 +37,7 @@ if __name__ == '__main__':
     K.set_session(sess)
     
     batch_size = 128
-    max_label_length = 150
+    max_label_length = 280
     epochs = 12
     base_model, model = crnn_model_based_on_densenet_crnn_time_softmax_activate(initial_learning_rate=0.0005)
 

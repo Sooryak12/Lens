@@ -37,9 +37,6 @@ def extract_train_data(src_image_root_path, src_label_json_file, save_image_path
                         try:
                             flag=0
                             text = text_info['label']
-
-                            if len(text)>140:
-                                continue
                             
                             if len(text)>max_length:
                                 max_length=len(text)
