@@ -1,5 +1,5 @@
 # Project Lens
-## Enlighting the Vision of Computers.
+## Enlightening the Vision of Computers.
 
 <img src="https://github.com/Sooryak12/Lens/blob/custom/Proposed%20Architecture.png">
 
