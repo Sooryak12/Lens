@@ -33,43 +33,6 @@ def load_model(model_type, weight):
     return base_model
 
 
-def predict_by_image_path(image_path, input_shape, base_model):
-    """
-    :param image_path:  input image path
-    :param input_shape: input shape
-    :param base_model:  base model
-    :return:
-    """
-    input_height, input_width, input_channel = input_shape
-    if input_channel == 1:
-        image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    else:
-        image = cv2.imread(image_path, cv2.IMREAD_COLOR)
-    scale = image.shape[0] * 1.0 / input_height
-    image_width = int(image.shape[1] // scale)
-    image = cv2.resize(image, (image_width, input_height))
-    image_height, image_width = image.shape[0:2]
-    if image_width <= input_width:
-        new_image = np.ones((input_height, input_width, input_channel), dtype='uint8')
-        new_image[:] = 255
-        if input_channel == 1:
-            image = np.expand_dims(image, axis=2)
-        new_image[:, :image_width, :] = image
-        image = new_image
-    else:
-        image = cv2.resize(image, (input_width, input_height))
-    text_image = np.array(image, 'f') / 127.5 - 1.0
-    text_image = np.reshape(text_image, [1, input_height, input_width, input_channel])
-    y_pred = base_model.predict(text_image)
-    y_pred = y_pred[:, :, :]
-    char_list = list()
-    pred_text = list(y_pred.argmax(axis=2)[0])
-    for index in groupby(pred_text):
-        if index[0] != config.num_class - 1:
-            char_list.append(character_map_table[str(index[0])])
-    return u''.join(char_list)
-
-
 def predict(image, input_shape, base_model):
     input_height, input_width, input_channel = input_shape
     scale = image.shape[0] * 1.0 / input_height
@@ -136,8 +99,6 @@ if __name__ == '__main__':
         for idx, info in enumerate(label_info_dict.items()):
             image_name, text_info_list = info
             src_image = io.imread(f"official_data/test_image/{image_name}")
-            # print(os.path.join(test_image_root_path, image_name))
-            #print('process: {:3d}/{:3d}. image: {}'.format(idx + 1, len(label_info_dict.items()), image_name))
             if idx %25==0:
                 print(idx)
             for index, text_info in enumerate(text_info_list):
@@ -156,7 +117,3 @@ if __name__ == '__main__':
     with open(save_label_json_file, 'w',encoding="utf-8") as out_file:
         out_file.write(json.dumps(label_info_dict))
 
-
-'''bash
-python recognizer/predict.py
-'''
