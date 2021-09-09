@@ -1,18 +1,13 @@
-# -*- coding=utf-8 -*-
+
 import argparse
 import os
-import sys
 
-basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-sys.path.append(basedir)
 
 import tensorflow as tf
 
 from recognizer.models.crnn_model import crnn_model_based_on_densenet_crnn_time_softmax_activate
 from recognizer.tools.generator import Generator
 from recognizer.tools.config import config
-
-K = tf.compat.v1.keras.backend
 
 
 if __name__ == '__main__':
@@ -29,12 +24,6 @@ if __name__ == '__main__':
                         default='tmp_data/recognizer_txts')
 
     parser = parser.parse_args()
-
-    sess_config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
-    sess_config.gpu_options.per_process_gpu_memory_fraction = config.GPU_MEMORY_FRACTION
-    sess_config.gpu_options.allow_growth = config.TF_ALLOW_GROWTH
-    sess = tf.compat.v1.Session(config=sess_config)
-    K.set_session(sess)
     
     batch_size = 128
     max_label_length = 280
@@ -71,6 +60,3 @@ if __name__ == '__main__':
                         callbacks=[checkpoint,change_learning_rate, tensor_board, early_stop])
 
 
-'''bash
-python recognizer/train.py
-'''
