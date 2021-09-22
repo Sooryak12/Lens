@@ -1,9 +1,20 @@
 import tensorflow as tf
+from recognizer.tools.config import config
+from tensorflow.keras.layers import Conv2D,Dense,TimeDistributed,Flatten,Reshape,Input,Lambda
 from recognizer.models.crnn import densenet_crnn_time
 
 K = keras.backend
-Lambda = tf.keras.layers.Lambda
-Input = tf.keras.layers.Input
+
+
+
+def densenet_crnn_time(inputs,activation=None):
+    densenet = tf.keras.applications.DenseNet121(input_tensor=inputs, include_top=False, weights=None)
+    x = Conv2D(filters=512, kernel_size=(5, 5), strides=(2, 1), padding='same')(densenet.layers[50].output)
+    #x = Reshape((160, 1, 896))(x)
+    x = Reshape((280, 1, 512))(x)
+    x = TimeDistributed(Flatten())(x)
+    x = Dense(config.num_class, activation=activation)(x)
+    return x
 
 
 def ctc_lambda_func(args):
@@ -15,7 +26,7 @@ def crnn_model_mobile_net(initial_learning_rate=0.0005):
     
     
     shape = (32, 280, 3)
-    inputs = tf.keras.layers.Input(shape=shape, name='input_data')
+    inputs = tf.keras.layers.Input(shape=shape)
     output = densenet_crnn_time(inputs=inputs, activation='softmax')
     model_body = tf.keras.models.Model(inputs, output)
     model_body.summary()
@@ -38,6 +49,27 @@ def crnn_model_mobile_net(initial_learning_rate=0.0005):
     #              optimizer=tf.keras.optimizers.Adam(initial_learning_rate))
     #sgd = SGD(lr=0.02, decay=1e-6, momentum=0.9, nesterov=True, clipnorm=5)  -> other optimizer
     return model_body, model
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Ignore
+
+
+
 
 
 """

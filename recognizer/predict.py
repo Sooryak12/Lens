@@ -4,12 +4,14 @@ import cv2
 from skimage import io
 import numpy as np
 from itertools import groupby
+from bidict import bidict
 
 from recognizer.models.crnn_model import crnn_model_mobile_net
 from recognizer.tools.config import config
-from recognizer.tools.utils import get_dict
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
+
 
 
 
@@ -59,6 +61,21 @@ def predict(image, input_shape, base_model):
         if index[0] != config.num_class - 1:
             char_list.append(character_map_table[str(index[0])])
     return u''.join(char_list)
+
+
+
+def get_dict(input_file_path):
+    keys = bidict()
+    i = 0
+    with open(input_file_path, 'r', encoding='utf-8') as input_file:
+        for char in input_file:
+            char = char.replace('\r', '').replace('\n', '')
+            if char == '#':
+                i += 1
+                continue
+            keys['{0}'.format(i)] = char
+            i += 1
+    return keys
 
 
 if __name__ == '__main__':
