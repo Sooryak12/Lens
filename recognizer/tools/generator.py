@@ -11,7 +11,6 @@ class BatchIndices:
         self.is_training = is_training
         self.index = None
         self.curr = None
-        self.is_epoch_end = False
         self.reset()
 
     def reset(self):
@@ -19,14 +18,12 @@ class BatchIndices:
         self.curr = 0
 
     def __next__(self):
-        self.is_epoch_end = False
         if self.curr >= self.total_num:
             self.reset()
-            self.is_epoch_end = True
         remaining_next = min(self.batch_size, self.total_num - self.curr)
         res = self.index[self.curr:self.curr + remaining_next]
         self.curr += remaining_next
-        return res, self.is_epoch_end
+        return res
 
 
 class Generator:
@@ -62,7 +59,7 @@ class Generator:
         sequence_length = 280
         start = 0
         while True:
-            batch_index, is_epoch_end = next(self.batch_indexes)
+            batch_index= next(self.batch_indexes)
             curr_bath_size = len(batch_index)
             try:
                 batch_image_name_array = image_name_array[batch_index]

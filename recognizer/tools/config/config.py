@@ -6,6 +6,8 @@ num_class = get_lines() + 1
 
 train_test_split=0.95
 
+
+
 char_path='recognizer/tools/dictionary/chars.txt'
 
 train_image_path='official_data/train_image_common'
