@@ -1,16 +1,9 @@
-import argparse
 import os
 import json
 import cv2
-import sys
 from skimage import io
 import numpy as np
-
 from itertools import groupby
-from enum import Enum
-
-basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-sys.path.append(basedir)
 
 from recognizer.models.crnn_model import crnn_model_mobile_net
 from recognizer.tools.config import config
@@ -19,16 +12,11 @@ from recognizer.tools.utils import get_dict
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
-class ModelType(Enum):
-    DENSENET_CRNN_TIME_SOFTMAX = 0
 
 
 def load_model(model_type, weight):
-    if model_type == ModelType.DENSENET_CRNN_TIME_SOFTMAX:
         base_model, _ = crnn_model_mobile_net()
         base_model.load_weights(weight)
-    else:
-        raise ValueError('parameter model_type error.')
     return base_model
 
 
@@ -74,25 +62,21 @@ def predict(image, input_shape, base_model):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--char_path', type=str, default='recognizer/tools/dictionary/chars.txt')
-    parser.add_argument('--model_path', type=str,
-                        default='/content/weights_crnn-010-12.184.h5')
-    parser.add_argument('--null_json_path', type=str,
-                        default='null_submission_non_max.json')
-    parser.add_argument('--test_image_path', type=str,
-                        default='offical_data/test_image')
-    parser.add_argument('--submission_path', type=str,
-                        default='output/test_submission.json')
-    opt = parser.parse_args()
+    
+    char_path=config.char_path
+    model_path='/content/weights_crnn-010-12.184.h5'
+    null_json_path='null_submission_non_max.json'
+    test_image_path='offical_data/test_image'
+    submission_path='output/test_submission.json'
 
-    character_map_table = get_dict(opt.char_path)
+
+    character_map_table = get_dict(char_path)
     input_shape = (32, 280, 3)
-    model = load_model(ModelType.DENSENET_CRNN_TIME_SOFTMAX, opt.model_path)
-    print('load model done.')
+    model = load_model(model_path)
+    print(' model loaded')
 
-    test_label_json_file = opt.null_json_path
-    test_image_root_path = opt.test_image_path
+    test_label_json_file = null_json_path
+    test_image_root_path = test_image_path
     with open(test_label_json_file, 'r', encoding='utf-8') as in_file:
         label_info_dict = json.load(in_file)
         for idx, info in enumerate(label_info_dict.items()):
@@ -112,7 +96,7 @@ if __name__ == '__main__':
                 except Exception as e:
                     print(f"{image_name} : {index} -> {e}")
 
-    save_label_json_file = opt.submission_path
+    save_label_json_file = submission_path
     with open(save_label_json_file, 'w',encoding="utf-8") as out_file:
         out_file.write(json.dumps(label_info_dict))
 

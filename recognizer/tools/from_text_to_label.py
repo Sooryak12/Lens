@@ -1,26 +1,10 @@
-import argparse
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--src_train_file_path', type=str,
-                        default='tmp_data/recognizer_txts/train.txt')
 
-    parser.add_argument('--src_test_file_path', type=str,
-                        default='tmp_data/recognizer_txts/test.txt')
-
-    parser.add_argument('--dst_train_file_path', type=str,
-                        default='tmp_data/recognizer_txts/real_train.txt')
-    parser.add_argument('--dst_test_file_path', type=str,
-                        default='tmp_data/recognizer_txts/real_test.txt')
-
-    parser.add_argument('--dictionary_file_path', type=str,
-                        default='recognizer/tools/dictionary/chars.txt')
-
-    opt = parser.parse_args()
-    src_train_file_path = opt.src_train_file_path
-    dst_train_file_path = opt.dst_train_file_path
-    dictionary_file_path = opt.dictionary_file_path
+    src_train_file_path = 'tmp_data/recognizer_txts/train.txt'
+    dst_train_file_path = 'tmp_data/recognizer_txts/real_train.txt'
+    dictionary_file_path = config.char_path
     char_to_index = dict()
 
 # Reading Chars as Dictionary
@@ -58,8 +42,8 @@ if __name__ == '__main__':
 
 ## Test :
 
-    src_test_file_path = opt.src_test_file_path
-    dst_test_file_path = opt.dst_test_file_path
+    src_test_file_path = 'tmp_data/recognizer_txts/test.txt'
+    dst_test_file_path = 'tmp_data/recognizer_txts/real_test.txt'
 
     with open(dst_test_file_path, 'a') as out_file:
             with open(src_test_file_path, 'r', encoding='utf-8') as in_file:

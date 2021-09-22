@@ -1,10 +1,10 @@
-# -*- coding=utf-8 -*-
-import argparse
+import numpy as np
+
 import os
 import json
 from skimage import io,img_as_ubyte
 from skimage.transform import resize
-import numpy as np
+from recognizer.tools.config import config
 
 global_image_num = 0
 global_test_num=0
@@ -19,7 +19,8 @@ not_include=set(not_include)
 invalid_boxes=0
 max_length=0
 input_height,input_width=32,280   # Parameter
-train_split=0.95
+train_split=config.train_test_split
+
 def extract_train_data(src_image_root_path, src_label_json_file, save_image_path, save_txt_path,save_test_image_path):
     global global_image_num, char_set,invalid_boxes,max_length,input_width,input_height,global_test_num
 
@@ -81,33 +82,14 @@ def extract_train_data(src_image_root_path, src_label_json_file, save_image_path
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
 
-    parser.add_argument('--save_train_image_path', type=str,
-                        default='tmp_data/recognizer_images/train')
-    parser.add_argument('--save_test_image_path', type=str,
-                        default='tmp_data/recognizer_images/test')
-    parser.add_argument('--save_train_txt_path', type=str,
-                        default='tmp_data/recognizer_txts')
-    parser.add_argument('--train_image_common_root_path', type=str,
-                        default='official_data/train_image_common')
-    parser.add_argument('--common_label_json_file', type=str,
-                        default='official_data/train_label_common.json')
-
-    parser.add_argument('--train_image_special_root_path', type=str,
-                       default='official_data/train_image_special')
-    parser.add_argument('--special_label_json_file', type=str,
-                       default='official_data/train_label_special.json')
-
-    opt = parser.parse_args()
-
-    save_train_image_path = opt.save_train_image_path
-    save_train_txt_path = opt.save_train_txt_path
-    save_test_image_path=opt.save_test_image_path
+    save_train_image_path = 'tmp_data/recognizer_images/train'
+    save_train_txt_path = 'tmp_data/recognizer_txts'
+    save_test_image_path='tmp_data/recognizer_images/test'
 
 
-    train_image_common_root_path = opt.train_image_common_root_path
-    common_label_json_file = opt.common_label_json_file
+    train_image_common_root_path = config.train_image_path
+    common_label_json_file = config.train_json
     
     extract_train_data(train_image_common_root_path,
                        common_label_json_file,
@@ -118,8 +100,8 @@ if __name__ == '__main__':
     print('Common Image count : {}'.format(global_image_num))
     common=global_image_num
     
-    train_image_special_root_path = opt.train_image_special_root_path
-    special_label_json_file = opt.special_label_json_file
+    train_image_special_root_path = config.train_image_special_root_path
+    special_label_json_file = config.special_label_json_file
 
     extract_train_data(train_image_special_root_path,
                       special_label_json_file,
@@ -140,7 +122,7 @@ if __name__ == '__main__':
     char_list = list(char_set)
     char_list.sort()
 
-    with open('recognizer/tools/dictionary/chars.txt', 'a', encoding='utf-8') as out_file:
+    with open(config.char_path, 'a', encoding='utf-8') as out_file:
         for char in char_list:
             out_file.write('{}\n'.format(char))
 
