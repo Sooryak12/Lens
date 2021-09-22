@@ -1,1 +1,1 @@
-# digix_baseline
+# RCNN Recognizer Model
