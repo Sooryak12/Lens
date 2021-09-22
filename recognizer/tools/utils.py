@@ -4,7 +4,7 @@
 from bidict import bidict
 
 
-def get_chinese_dict(input_file_path):
+def get_dict(input_file_path):
     keys = bidict()
     i = 0
     with open(input_file_path, 'r', encoding='utf-8') as input_file:

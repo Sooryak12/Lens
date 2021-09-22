@@ -1,4 +1,3 @@
-# -*- coding=utf-8 -*-
 import argparse
 import os
 import json
@@ -13,9 +12,9 @@ from enum import Enum
 basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 sys.path.append(basedir)
 
-from recognizer.models.crnn_model import crnn_model_based_on_densenet_crnn_time_softmax_activate
+from recognizer.models.crnn_model import crnn_model_mobile_net
 from recognizer.tools.config import config
-from recognizer.tools.utils import get_chinese_dict
+from recognizer.tools.utils import get_dict
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
@@ -26,7 +25,7 @@ class ModelType(Enum):
 
 def load_model(model_type, weight):
     if model_type == ModelType.DENSENET_CRNN_TIME_SOFTMAX:
-        base_model, _ = crnn_model_based_on_densenet_crnn_time_softmax_activate()
+        base_model, _ = crnn_model_mobile_net()
         base_model.load_weights(weight)
     else:
         raise ValueError('parameter model_type error.')
@@ -87,7 +86,7 @@ if __name__ == '__main__':
                         default='output/test_submission.json')
     opt = parser.parse_args()
 
-    character_map_table = get_chinese_dict(opt.char_path)
+    character_map_table = get_dict(opt.char_path)
     input_shape = (32, 280, 3)
     model = load_model(ModelType.DENSENET_CRNN_TIME_SOFTMAX, opt.model_path)
     print('load model done.')

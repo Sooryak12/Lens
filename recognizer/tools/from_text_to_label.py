@@ -1,4 +1,3 @@
-# -*- coding=utf-8 -*-
 import argparse
 
 
@@ -82,8 +81,3 @@ if __name__ == '__main__':
                     for char in line_list[-1][:len(line_list[-1]) - 1]:
                         out_file.write('{} '.format(char_to_index[char]))
                     out_file.write('{}\n'.format(char_to_index[line_list[-1][-1]]))
-
-
-'''bash
-python recognizer/tools/from_text_to_label.py
-'''

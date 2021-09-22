@@ -1,16 +1,8 @@
-# -*- coding=utf-8 -*-
-
-
 import os
 import random
 import traceback
-import time
-
 import cv2
 import numpy as np
-
-from recognizer.tools.config import config
-
 
 class BatchIndices:
     def __init__(self, total_num, batch_size, is_training=True):
@@ -45,7 +37,6 @@ class Generator:
         self.max_label_length = max_label_length
         self.input_shape = input_shape
         self.is_training = is_training
-        self.epoch_time = 0
         self.image_to_label = self.parse_map_file()
         self.batch_indexes = BatchIndices(len(self.image_to_label), self.batch_size, self.is_training)
 
@@ -71,8 +62,6 @@ class Generator:
         sequence_length = 280
         start = 0
         while True:
-            if config.is_debug:
-                start = time.time()
             batch_index, is_epoch_end = next(self.batch_indexes)
             curr_bath_size = len(batch_index)
             try:
@@ -129,10 +118,7 @@ class Generator:
                           'label_length': label_length,
                          }
                 outputs = {'ctc': np.zeros([index])}
-                self.epoch_time += (time.time() - start)
-                if config.is_debug and is_epoch_end:
-                    print("\nThe current total time for epoch to load data is {0}.".format(self.epoch_time))
-                    self.epoch_time = 0
+    
                 del image, label, input_images, label_length, input_length
                 yield inputs, outputs
             except Exception as e:

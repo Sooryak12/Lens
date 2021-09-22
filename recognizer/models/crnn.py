@@ -1,6 +1,3 @@
-# -*- coding=utf-8 -*-
-
-
 import tensorflow as tf
 
 from recognizer.tools.config import config

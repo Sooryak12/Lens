@@ -144,7 +144,4 @@ if __name__ == '__main__':
         for char in char_list:
             out_file.write('{}\n'.format(char))
 
-'''bash
-python recognizer/tools/extract_train_data.py
-'''
 
