@@ -1,7 +1,7 @@
 import tensorflow as tf
 from recognizer.tools.config import config
 from tensorflow.keras.layers import Conv2D,Dense,TimeDistributed,Flatten,Reshape,Input,Lambda
-from recognizer.models.crnn import densenet_crnn_time
+from recognizer.model.crnn import densenet_crnn_time
 
 K = keras.backend
 

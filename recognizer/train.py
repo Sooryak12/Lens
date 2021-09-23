@@ -1,7 +1,7 @@
 
 import os
 import tensorflow as tf
-from recognizer.models.crnn_model import crnn_model_mobile_net
+from recognizer.model.crnn_model import crnn_model_mobile_net
 from recognizer.tools.generator import Generator
 from tensorflow.keras.callbacks import TensorBoard,ReduceLROnPlateau,EarlyStopping,ModelCheckpoint
 
