@@ -1,15 +1,18 @@
+
 # Project Lens
 ## Enlightening the Vision of Computers.
 
-<img src="https://github.com/Sooryak12/Lens/blob/custom/Proposed%20Architecture.png">
+
+![object-character-recognition-ocr-example-1060x706](https://user-images.githubusercontent.com/55055042/143785042-ca0d91df-eaef-475a-a202-3eb3154363bf.jpeg)
+
+
+
 
 ### Description
 
-*Content
+<img src="https://github.com/Sooryak12/Lens/blob/custom/Proposed%20Architecture.png">
 
-### Detailed Explanation
-
-<br>
+[ ] Content
 
 #### Bounding Box Detection:
 For the detection part, we have trained two models, the YoloV5 model, and PSENet model. The PseNet model is trained on just the Common Images, and the YOLOV5 model is trained on all the Images.
